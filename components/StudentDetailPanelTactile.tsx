@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle2, AlertTriangle, FileEdit, PlusCircle, FileText, ExternalLink, Send, Calendar, MessageSquare } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, FileEdit, PlusCircle, FileText, ExternalLink, Send, Calendar, MessageSquare, User } from 'lucide-react';
 
 export function StudentDetailPanelTactile({ student, getStatusStyle, onOpenAction }: any) {
   const [profileTab, setProfileTab] = useState('overview');
@@ -11,8 +11,8 @@ export function StudentDetailPanelTactile({ student, getStatusStyle, onOpenActio
       <div className="p-6 border-b-2 border-[#e3e2e2] bg-[#faf9f9]">
         <div className="flex justify-between items-start">
           <div>
-            <h2 className="text-3xl font-heading text-[#1a1c1c] mb-1">{student.name}</h2>
-            <p className="text-sm font-bold text-[#6e7881] uppercase tracking-wide">{student.nim} • {student.fakultas}</p>
+            <h2 className="text-3xl font-heading text-[#1a1c1c] mb-1 flex items-center gap-2"><User className="w-7 h-7 text-[#006590]" /> Profil Kondisi Mahasiswa</h2>
+            <p className="text-sm font-bold text-[#6e7881] uppercase tracking-wide">{student.name} • {student.nim} • {student.fakultas}</p>
           </div>
           <div className={`px-4 py-2 rounded-2xl border-2 border-b-4 text-center ${getStatusStyle(student.status)}`}>
             <div className="text-[10px] font-bold uppercase tracking-widest mb-1 opacity-80">Risk Score</div>
@@ -23,13 +23,13 @@ export function StudentDetailPanelTactile({ student, getStatusStyle, onOpenActio
 
       <div className="flex border-b-2 border-[#e3e2e2] px-4 pt-4 bg-[#f4f3f3] overflow-x-auto">
         <button onClick={() => setProfileTab('overview')} className={`py-3 px-4 font-bold text-sm uppercase tracking-wide border-b-4 transition-colors ${profileTab === 'overview' ? 'border-[#2b6c00] text-[#2b6c00]' : 'border-transparent text-[#6e7881] hover:text-[#3e4850]'} flex items-center gap-2`}>
-          Triase
+          Dashboard Triase
         </button>
         <button onClick={() => setProfileTab('rekam')} className={`py-3 px-4 font-bold text-sm uppercase tracking-wide border-b-4 transition-colors ${profileTab === 'rekam' ? 'border-[#2b6c00] text-[#2b6c00]' : 'border-transparent text-[#6e7881] hover:text-[#3e4850]'} flex items-center gap-2`}>
-          Rekam Medis
+          Profil Kondisi Mahasiswa
         </button>
         <button onClick={() => setProfileTab('rujukan')} className={`py-3 px-4 font-bold text-sm uppercase tracking-wide border-b-4 transition-colors ${profileTab === 'rujukan' ? 'border-[#2b6c00] text-[#2b6c00]' : 'border-transparent text-[#6e7881] hover:text-[#3e4850]'} flex items-center gap-2`}>
-          Rujukan
+          Manajemen Jadwal
         </button>
       </div>
 

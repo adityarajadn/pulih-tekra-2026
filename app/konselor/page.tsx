@@ -85,7 +85,7 @@ function KonselorView({ onLogout }) {
             <LayoutDashboard className="w-5 h-5" /> Dashboard Triase
           </button>
           <button onClick={() => setActiveTab('kalender')} className={`nav-item ${activeTab === 'kalender' ? 'bg-[#51bd00] text-[#194500] border-[#2b6c00]' : ''}`}>
-            <CalendarDays className="w-5 h-5" /> Kalender Jadwal
+            <CalendarDays className="w-5 h-5" /> Manajemen Jadwal
           </button>
         </nav>
 
@@ -103,7 +103,7 @@ function KonselorView({ onLogout }) {
               <div className="card-tactile bg-[#f4f3f3] border-[#e3e2e2]">
                 <div className="flex items-center gap-3 mb-2">
                   <AlertTriangle className="w-6 h-6 text-[#2b6c00]" />
-                  <h2 className="text-2xl font-heading text-[#1a1c1c]">Daftar Triase</h2>
+                  <h2 className="text-2xl font-heading text-[#1a1c1c]">Dashboard Triase</h2>
                 </div>
                 <p className="text-sm text-[#6e7881] font-bold uppercase tracking-wide mb-6">Diurutkan berdasar Risk Score</p>
                 
@@ -144,7 +144,7 @@ function KonselorView({ onLogout }) {
               ) : (
                 <div className="card-tactile h-full min-h-[500px] flex flex-col items-center justify-center text-[#6e7881] text-center bg-[#f4f3f3] border-dashed">
                   <Users className="w-16 h-16 mb-4 text-[#dadada]" />
-                  <p className="font-heading text-xl text-[#3e4850] mb-2">Pilih mahasiswa</p>
+                  <p className="font-heading text-xl text-[#3e4850] mb-2">Profil Kondisi Mahasiswa</p>
                   <p className="font-medium max-w-sm">Informasi detail, riwayat mood, rekam jejak, dan opsi rujukan akan muncul di sini.</p>
                 </div>
               )}
@@ -155,7 +155,7 @@ function KonselorView({ onLogout }) {
         {activeTab === 'kalender' && (
           <div className="card-tactile min-h-[600px] animate-in fade-in duration-300">
             <h2 className="text-3xl font-heading text-[#1a1c1c] mb-6 flex items-center gap-3">
-              <CalendarDays className="w-8 h-8 text-[#2b6c00]" /> Jadwal Konseling Aktif
+              <CalendarDays className="w-8 h-8 text-[#2b6c00]" /> Manajemen Jadwal
             </h2>
             <div className="space-y-8">
               <div>
