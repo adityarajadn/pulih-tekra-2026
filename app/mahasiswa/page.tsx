@@ -19,7 +19,10 @@ import {
   LogOutIcon,
   CheckCircle2,
   Clock,
-  AlertTriangle
+  AlertTriangle,
+  MapPin,
+  User,
+  Star
 } from 'lucide-react';
 
 // --- DATA DUMMY ---
@@ -50,13 +53,24 @@ export default function MahasiswaPage() {
   );
 }
 
-function MahasiswaView({ onLogout }) {
+function MahasiswaView({ onLogout }: { onLogout: () => void }) {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [hasCheckedInToday, setHasCheckedInToday] = useState(false);
-  const [selectedMood, setSelectedMood] = useState(null);
+  const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [presensiStep, setPresensiStep] = useState('list'); 
+  const [selectedCounselor, setSelectedCounselor] = useState('');
+  const [selectedSlot, setSelectedSlot] = useState('');
+  const [bookingStatus, setBookingStatus] = useState('');
 
-  const handleMoodSelect = (moodId) => {
+  const counselorOptions = [
+    { id: 'rani', name: 'Rani Wulandari, M.Psi.', focus: 'Stress akademik & burnout', schedule: 'Senin - Rabu' },
+    { id: 'dimas', name: 'Dimas Pratama, S.Psi.', focus: 'Adaptasi perkuliahan & relasi', schedule: 'Selasa - Kamis' },
+    { id: 'sinta', name: 'Sinta Maharani, M.Psi.', focus: 'Krisis emosi & recovery plan', schedule: 'Jumat - Sabtu' },
+  ];
+
+  const slotOptions = ['09:00', '10:30', '13:00', '15:00'];
+
+  const handleMoodSelect = (moodId: string) => {
     setSelectedMood(moodId);
     setHasCheckedInToday(true);
     if (activeTab === 'presensi' && presensiStep === 'mood_modal') {
@@ -70,6 +84,21 @@ function MahasiswaView({ onLogout }) {
     } else {
       setPresensiStep('response');
     }
+  };
+
+  const handleBookingCounseling = () => {
+    setActiveTab('konseling');
+    setBookingStatus('');
+  };
+
+  const handleConfirmBooking = () => {
+    if (!selectedCounselor || !selectedSlot) {
+      setBookingStatus('Pilih konselor dan jam sesi terlebih dahulu.');
+      return;
+    }
+
+    const counselor = counselorOptions.find((option) => option.id === selectedCounselor);
+    setBookingStatus(`Booking berhasil untuk ${counselor?.name || 'konselor'} pada pukul ${selectedSlot}.`);
   };
 
   const moodOptions = [
@@ -116,6 +145,9 @@ function MahasiswaView({ onLogout }) {
           </button>
           <button onClick={() => setActiveTab('chatbot')} className={`nav-item ${activeTab === 'chatbot' ? 'bg-[#ffdf92] text-[#594400] border-[#f4bf00]' : ''}`}>
             <Bot className="w-5 h-5" /> Chat TEMAN
+          </button>
+          <button onClick={() => setActiveTab('konseling')} className={`nav-item ${activeTab === 'konseling' ? 'bg-[#c8e6ff] text-[#004c6e] border-[#88ceff]' : ''}`}>
+            <Calendar className="w-5 h-5" /> Booking Konseling
           </button>
         </nav>
 
@@ -185,7 +217,7 @@ function MahasiswaView({ onLogout }) {
                 </div>
               </div>
             ) : (
-              <MoodResponseVibrant mood={selectedMood} onOpenChatbot={() => setActiveTab('chatbot')} />
+              <MoodResponseVibrant mood={selectedMood} onOpenChatbot={() => setActiveTab('chatbot')} onBookCounseling={handleBookingCounseling} />
             )}
 
             {/* Bottom Row */}
@@ -293,7 +325,7 @@ function MahasiswaView({ onLogout }) {
                   </div>
                 </div>
 
-                <MoodResponseVibrant mood={selectedMood} onOpenChatbot={() => setActiveTab('chatbot')} />
+                <MoodResponseVibrant mood={selectedMood} onOpenChatbot={() => setActiveTab('chatbot')} onBookCounseling={handleBookingCounseling} />
 
                 <div className="text-center mt-6">
                   <button onClick={() => setPresensiStep('list')} className="btn-outline py-3 px-6">Kembali ke Daftar Presensi</button>
@@ -340,6 +372,82 @@ function MahasiswaView({ onLogout }) {
         {activeTab === 'chatbot' && (
           <div className="h-[calc(100vh-120px)] max-h-[800px] max-w-3xl mx-auto flex flex-col">
             <ChatbotTEMAN />
+          </div>
+        )}
+
+        {activeTab === 'konseling' && (
+          <div className="animate-in fade-in duration-300 max-w-5xl mx-auto space-y-6">
+            <div className="card-tactile bg-[#e6f4ff] border-[#88ceff] flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-3xl font-heading text-[#00405d] mb-2">Booking Konseling</h2>
+                <p className="text-[#006590] font-medium">Pilih konselor, jadwal, lalu konfirmasi sesi bantuan yang paling cocok.</p>
+              </div>
+              <div className="bg-white border-2 border-[#88ceff] rounded-2xl px-4 py-3 font-bold text-[#004c6e] flex items-center gap-2">
+                <Clock className="w-5 h-5" /> Layanan tersedia Senin - Sabtu
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="card-tactile">
+                <h3 className="text-2xl font-heading text-[#1a1c1c] mb-4 flex items-center gap-2"><User className="w-6 h-6 text-[#006590]" /> Pilih Konselor</h3>
+                <div className="space-y-3">
+                  {counselorOptions.map((counselor) => (
+                    <button
+                      key={counselor.id}
+                      onClick={() => setSelectedCounselor(counselor.id)}
+                      className={`w-full text-left p-4 rounded-2xl border-2 border-b-4 transition-all ${selectedCounselor === counselor.id ? 'bg-[#c8e6ff] border-[#88ceff] border-b-[#006590]' : 'bg-white border-[#e3e2e2] border-b-[#dadada]'}`}
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <p className="font-bold text-[#1a1c1c] text-lg">{counselor.name}</p>
+                          <p className="text-sm text-[#3e4850] mt-1">{counselor.focus}</p>
+                          <p className="text-xs font-bold text-[#6e7881] mt-2 uppercase tracking-wide">{counselor.schedule}</p>
+                        </div>
+                        <Star className="w-5 h-5 text-[#fec700]" />
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="card-tactile">
+                <h3 className="text-2xl font-heading text-[#1a1c1c] mb-4 flex items-center gap-2"><CalendarDays className="w-6 h-6 text-[#2b6c00]" /> Pilih Slot Waktu</h3>
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  {slotOptions.map((slot) => (
+                    <button
+                      key={slot}
+                      onClick={() => setSelectedSlot(slot)}
+                      className={`p-4 rounded-2xl border-2 border-b-4 font-bold transition-all ${selectedSlot === slot ? 'bg-[#87fe45] border-[#51bd00] border-b-[#2b6c00] text-[#1f5100]' : 'bg-white border-[#e3e2e2] border-b-[#dadada] text-[#3e4850]'}`}
+                    >
+                      {slot}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="bg-[#faf9f9] border-2 border-[#e3e2e2] rounded-2xl p-4 mb-4">
+                  <p className="text-sm font-bold text-[#6e7881] uppercase tracking-wide mb-2">Lokasi</p>
+                  <p className="text-[#1a1c1c] font-medium flex items-center gap-2"><MapPin className="w-4 h-4 text-[#006590]" /> Ruang Konseling B / Online via TEMAN</p>
+                </div>
+
+                <button onClick={handleConfirmBooking} className="btn-primary py-3 px-6 w-full bg-[#006590] border-[#00405d] text-white">
+                  <Calendar className="w-5 h-5" /> Konfirmasi Booking
+                </button>
+
+                {bookingStatus && (
+                  <div className="mt-4 p-4 rounded-2xl border-2 border-[#88ceff] bg-[#e6f4ff] text-[#00405d] font-medium">
+                    {bookingStatus}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="card-tactile bg-[#ffdf92] border-[#f4bf00]">
+              <h3 className="font-heading text-xl text-[#594400] mb-2">Butuh bantuan cepat?</h3>
+              <p className="text-[#6e5400] mb-4">Kalau kamu belum siap booking, kamu bisa langsung ngobrol anonim lewat TEMAN dulu.</p>
+              <button onClick={() => setActiveTab('chatbot')} className="btn-outline bg-white py-3 px-6 border-[#f4bf00] text-[#6e5400]">
+                <Bot className="w-5 h-5" /> Buka Chat TEMAN
+              </button>
+            </div>
           </div>
         )}
 
