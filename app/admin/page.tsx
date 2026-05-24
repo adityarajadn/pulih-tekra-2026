@@ -21,7 +21,7 @@ export default function AdminPage() {
   );
 }
 
-function AdminView({ onLogout }) {
+function AdminView({ onLogout }: { onLogout: () => void }) {
   return (
     <div className="flex-1 p-4 md:p-8 overflow-y-auto bg-[#faf9f9] min-h-screen">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 border-b-2 border-[#e3e2e2] pb-6 gap-4">
