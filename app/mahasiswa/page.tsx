@@ -61,6 +61,7 @@ function MahasiswaView({ onLogout }: { onLogout: () => void }) {
   const [selectedCounselor, setSelectedCounselor] = useState('');
   const [selectedSlot, setSelectedSlot] = useState('');
   const [bookingStatus, setBookingStatus] = useState('');
+  const [favoriteCounselorId, setFavoriteCounselorId] = useState('rani');
 
   const counselorOptions = [
     { id: 'rani', name: 'Rani Wulandari, M.Psi.', focus: 'Stress akademik & burnout', schedule: 'Senin - Rabu' },
@@ -392,10 +393,18 @@ function MahasiswaView({ onLogout }: { onLogout: () => void }) {
                 <h3 className="text-2xl font-heading text-[#1a1c1c] mb-4 flex items-center gap-2"><User className="w-6 h-6 text-[#006590]" /> Pilih Konselor</h3>
                 <div className="space-y-3">
                   {counselorOptions.map((counselor) => (
-                    <button
+                    <div
                       key={counselor.id}
+                      role="button"
+                      tabIndex={0}
                       onClick={() => setSelectedCounselor(counselor.id)}
-                      className={`w-full text-left p-4 rounded-2xl border-2 border-b-4 transition-all ${selectedCounselor === counselor.id ? 'bg-[#c8e6ff] border-[#88ceff] border-b-[#006590]' : 'bg-white border-[#e3e2e2] border-b-[#dadada]'}`}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault();
+                          setSelectedCounselor(counselor.id);
+                        }
+                      }}
+                      className={`w-full text-left p-4 rounded-2xl border-2 border-b-4 transition-all cursor-pointer ${selectedCounselor === counselor.id ? 'bg-[#c8e6ff] border-[#88ceff] border-b-[#006590]' : 'bg-white border-[#e3e2e2] border-b-[#dadada]'}`}
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div>
@@ -403,9 +412,23 @@ function MahasiswaView({ onLogout }: { onLogout: () => void }) {
                           <p className="text-sm text-[#3e4850] mt-1">{counselor.focus}</p>
                           <p className="text-xs font-bold text-[#6e7881] mt-2 uppercase tracking-wide">{counselor.schedule}</p>
                         </div>
-                        <Star className="w-5 h-5 text-[#fec700]" />
+                        <button
+                          type="button"
+                          onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            setFavoriteCounselorId((current) => current === counselor.id ? '' : counselor.id);
+                          }}
+                          aria-pressed={favoriteCounselorId === counselor.id}
+                          aria-label={favoriteCounselorId === counselor.id ? `Hapus favorit ${counselor.name}` : `Jadikan favorit ${counselor.name}`}
+                          className="shrink-0"
+                        >
+                          <Star
+                            className={`w-5 h-5 transition-colors ${favoriteCounselorId === counselor.id ? 'text-[#fec700] fill-[#fec700]' : 'text-[#dadada]'}`}
+                          />
+                        </button>
                       </div>
-                    </button>
+                    </div>
                   ))}
                 </div>
               </div>
