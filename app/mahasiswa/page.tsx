@@ -215,6 +215,18 @@ function MahasiswaView({ onLogout }) {
                 <h3 className="text-xl font-heading text-[#1a1c1c] mb-6">Progress Akademik</h3>
                 <div className="space-y-5">
                   <div>
+                    <div className="flex justify-between items-end mb-2">
+                      <span className="text-sm font-bold text-[#3e4850] uppercase tracking-wide">SKS Terpenuhi</span>
+                      <span className="text-lg font-heading text-[#006590]">84/144</span>
+                    </div>
+                    <div className="progress-track"><div className="progress-fill-blue" style={{ width: '58%' }}></div></div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between items-end mb-2">
+                      <span className="text-sm font-bold text-[#3e4850] uppercase tracking-wide">IPK Rata-Rata</span>
+                      <span className="text-lg font-heading text-[#2b6c00]">3.85</span>
+                    </div>
+                    <div className="progress-track"><div className="progress-fill-green" style={{ width: '96%' }}></div></div>
                   </div>
                 </div>
               </div>
