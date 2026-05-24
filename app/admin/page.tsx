@@ -3,6 +3,7 @@ import React from 'react';
 import GlobalStyles from '../../components/GlobalStyles';
 import { Building, LogOutIcon, Users, AlertTriangle, TrendingUp } from 'lucide-react';
 
+// --- DATA ---
 const facultiesData = [
   { name: "FILKOM", score: 62, trend: "naik" },
   { name: "FT", score: 58, trend: "naik" },
