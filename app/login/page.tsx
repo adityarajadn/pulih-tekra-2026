@@ -39,7 +39,12 @@ export default function LoginPage() {
   const submit = (role?: string) => {
     if (role) {
       try { localStorage.setItem('pulih_role', role); } catch (e) {}
-      router.push('/');
+      // Redirect to role-specific page for demo quick access
+      if (role === 'mahasiswa') router.push('/mahasiswa');
+      else if (role === 'konselor') router.push('/konselor');
+      else if (role === 'admin') router.push('/admin');
+      else if (role === 'dti') router.push('/dti');
+      else router.push('/');
       return;
     }
     try { localStorage.setItem('pulih_role', 'mahasiswa'); } catch (e) {}
