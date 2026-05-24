@@ -32,7 +32,7 @@ function AdminView({ onLogout }) {
           <p className="text-[#6e7881] font-medium font-bold uppercase tracking-wider text-sm">Data Agregat Kesejahteraan Universitas</p>
         </div>
         <div className="flex gap-3 w-full md:w-auto">
-          <button className="btn-primary py-3 px-6 shrink-0 text-sm">Unduh PDF</button>
+          <button onClick={() => { try { window.print(); } catch(e){ alert('Print failed: '+(e && e.message ? e.message : e)); } }} className="btn-primary py-3 px-6 shrink-0 text-sm">Unduh PDF</button>
           <button onClick={onLogout} className="btn-outline py-3 px-4 shrink-0 border-[#dadada] text-[#3e4850]"><LogOutIcon className="w-5 h-5"/></button>
         </div>
       </div>

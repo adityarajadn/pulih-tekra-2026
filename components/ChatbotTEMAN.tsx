@@ -7,25 +7,46 @@ export function ChatbotTEMAN() {
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const messagesEndRef = useRef(null);
 
   useEffect(() => { (messagesEndRef as any).current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, isTyping]);
 
-  const handleSend = (e) => {
+  const handleSend = async (e) => {
     e.preventDefault();
-    if (!inputValue.trim()) return;
+    const trimmedInput = inputValue.trim();
+    if (!trimmedInput) return;
+    setErrorMessage('');
     const userMsg = { id: Date.now(), sender: 'user', text: inputValue };
-    setMessages(prev => [...prev, userMsg]);
+    const nextMessages = [...messages, userMsg];
+    setMessages(nextMessages);
     setInputValue('');
     setIsTyping(true);
-    
-    const isCrisis = ['depresi', 'mati', 'bunuh diri', 'menyerah', 'putus asa'].some(keyword => userMsg.text.toLowerCase().includes(keyword));
 
     setTimeout(() => {
-      setIsTyping(false);
-      if (isCrisis) setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'bot', isCrisis: true, text: 'Aku menangkap bahwa kamu sedang mengalami masa yang sangat berat. Keselamatanmu penting. Aku ingin menghubungkanmu dengan konselor profesional.' }]);
-      else setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'bot', text: 'Terima kasih sudah berbagi. Coba ambil waktu istirahat sejenak hari ini ya.' }]);
-    }, 1500);
+      void (async () => {
+        try {
+          const response = await fetch('/api/chatbot-teman', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages: nextMessages })
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data?.error || 'Gagal menghubungi TEMAN.');
+          }
+
+          setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'bot', text: data.reply }]);
+        } catch (error) {
+          setErrorMessage(error instanceof Error ? error.message : 'Gagal menghubungi TEMAN.');
+          setMessages(prev => [...prev, { id: Date.now() + 1, sender: 'bot', text: 'Maaf, aku sedang kesulitan terhubung ke Gemini. Coba lagi sebentar ya.' }]);
+        } finally {
+          setIsTyping(false);
+        }
+      })();
+    }, 300);
   };
 
   return (
@@ -51,6 +72,11 @@ export function ChatbotTEMAN() {
         {isTyping && (
           <div className="flex items-start">
             <div className="bg-white p-3 rounded-xl border-2 border-[#f4bf00]">...</div>
+          </div>
+        )}
+        {errorMessage && (
+          <div className="text-xs font-bold text-[#93000a] bg-[#ffdad6] border-2 border-[#ba1a1a] rounded-xl px-3 py-2">
+            {errorMessage}
           </div>
         )}
         <div ref={messagesEndRef} />
