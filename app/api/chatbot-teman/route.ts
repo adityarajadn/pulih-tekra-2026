@@ -7,12 +7,21 @@ const GEMINI_MODEL = 'gemini-2.5-flash';
 const SYSTEM_INSTRUCTION = `
 Kamu adalah TEMAN, asisten virtual kesejahteraan mahasiswa PULIH.
 Balas dalam bahasa Indonesia yang hangat, empatik, singkat, dan membantu.
+
+Gunakan pendekatan Cognitive Behavioral Therapy (CBT) dalam merespons:
+- Ingat bahwa "Cara kita berpikir memengaruhi cara kita merasa dan bertindak."
+- Bantu pengguna mengenali pikiran negatif atau tidak rasional (distorsi kognitif) secara halus.
+- Ajak pengguna menantang pikiran tersebut dengan pertanyaan reflektif (contoh: "Apakah ada bukti kuat yang mendukung pikiran tersebut?" atau "Adakah sudut pandang lain untuk melihat situasi ini?").
+- Bantu mereka menemukan perspektif alternatif yang lebih seimbang dan realistis untuk mengelola emosinya.
+
 Jangan menghakimi, jangan menggurui, dan jangan memberi diagnosis medis.
+
 Jika pengguna membahas self-harm, bunuh diri, atau situasi krisis, prioritaskan keselamatan:
 - akui perasaan pengguna dengan empati,
 - sarankan mereka segera menghubungi orang terpercaya, konselor, layanan darurat lokal, atau tenaga profesional,
 - ajak mereka menjauh dari benda berbahaya,
 - tetap tenang dan suportif.
+
 Jika konteksnya umum, bantu dengan pertanyaan terbuka dan langkah kecil yang praktis.
 `;
 
@@ -32,6 +41,32 @@ export async function POST(request: Request) {
     const body = await request.json();
     const messages = Array.isArray(body?.messages) ? (body.messages as ChatMessage[]) : [];
     
+    // 3. Trigger berbasis chatbot TEMAN
+    // Deteksi frasa atau kata kunci kategori sinyal krisis
+    const crisisKeywords = ['bunuh diri', 'ingin mati', 'menyakiti diri', 'melukai diri', 'tidak ingin hidup', 'putus asa', 'nyilet', 'mengakhiri hidup', 'gak mau hidup'];
+    const lastUserMessage = messages.filter(m => m.sender === 'user').pop()?.text?.toLowerCase() || '';
+    
+    const isCrisis = crisisKeywords.some(keyword => lastUserMessage.includes(keyword));
+
+    if (isCrisis) {
+      // Hentikan percakapan reguler dan berikan pesan darurat
+      const emergencyMessage = `🚨 **PERINGATAN DARURAT** 🚨
+
+TEMAN mendeteksi bahwa kamu sedang mengalami situasi yang sangat berat dan mungkin berisiko bagi keselamatanmu. Keselamatanmu adalah hal yang paling utama.
+
+Tolong, jangan hadapi ini sendirian. Kami siap membantumu. Segera hubungi salah satu layanan berikut (aktif 24 jam):
+📞 **Hotline Konseling PULIH**: 119 ext. 8
+📞 **Layanan Darurat**: 112
+🏥 **UGD RS Universitas Brawijaya**
+
+*Sistem secara otomatis telah mengeskalasi statusmu ke Jalur Merah. Konselor kami akan segera memberikan perhatian khusus untuk mendampingimu.*`;
+
+      // Logika eskalasi status (dapat diintegrasikan dengan database)
+      // Misalnya: await supabase.from('profiles').update({ status: 'merah' }).eq('user_id', userId);
+
+      return NextResponse.json({ reply: emergencyMessage });
+    }
+
     const formattedMessages = [
       { role: 'system', content: SYSTEM_INSTRUCTION.trim() },
       ...messages

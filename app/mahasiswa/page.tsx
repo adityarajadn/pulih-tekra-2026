@@ -84,6 +84,27 @@ const facultiesData = [
   { name: "FH", score: 35, trend: "turun" },
 ];
 
+const dummyMoodTrendData = Array.from({ length: 30 }, (_, i) => {
+  const baseHeight = 40 + Math.sin(i / 3) * 20; // Wavy baseline
+  const noise = Math.sin(i * 12.9898 + 78.233) * 30;
+  const height = Math.max(10, Math.min(100, Math.floor(baseHeight + noise)));
+
+  let color = "bg-[#87fe45]"; // green
+  let tooltip = "Baik";
+  if (height <= 40) {
+    color = "bg-[#ba1a1a]"; // red
+    tooltip = "Sangat Buruk";
+  } else if (height <= 60) {
+    color = "bg-[#006590]"; // blue
+    tooltip = "Buruk";
+  } else if (height <= 80) {
+    color = "bg-[#fec700]"; // yellow
+    tooltip = "Biasa";
+  }
+
+  return { day: 30 - i, height, color, tooltip };
+}).reverse(); // Current day is last
+
 const jadwalKuliahData = [
   {
     hari: "Senin",
@@ -91,37 +112,37 @@ const jadwalKuliahData = [
       { mk: "Pemrograman Lanjut", jam: "07:00:00 - 08:40:00", ruang: "F3.1" },
       { mk: "Aljabar Linear", jam: "08:45:00 - 10:25:00", ruang: "F4.4" },
       { mk: "Basis Data", jam: "10:30:00 - 12:10:00", ruang: "RV 1.5" },
-      { mk: "Pemrograman Lanjut", jam: "16:00:00 - 17:40:00", ruang: "G1.5" }
-    ]
+      { mk: "Pemrograman Lanjut", jam: "16:00:00 - 17:40:00", ruang: "G1.5" },
+    ],
   },
   {
     hari: "Selasa",
     jadwal: [
       { mk: "Etika Profesi", jam: "07:00:00 - 08:40:00", ruang: "F4.1" },
       { mk: "Sistem Operasi", jam: "08:45:00 - 10:25:00", ruang: "F3.4" },
-      { mk: "Sistem Operasi", jam: "15:20:00 - 17:00:00", ruang: "G1.2" }
-    ]
+      { mk: "Sistem Operasi", jam: "15:20:00 - 17:00:00", ruang: "G1.2" },
+    ],
   },
   {
     hari: "Rabu",
     jadwal: [
-      { mk: "Bahasa Inggris", jam: "15:20:00 - 17:00:00", ruang: "F3.5" }
-    ]
+      { mk: "Bahasa Inggris", jam: "15:20:00 - 17:00:00", ruang: "F3.5" },
+    ],
   },
   {
     hari: "Kamis",
     jadwal: [
       { mk: "Pemrograman Lanjut", jam: "08:45:00 - 10:25:00", ruang: "F4.6" },
-      { mk: "Sistem Operasi", jam: "15:20:00 - 17:00:00", ruang: "F3.3" }
-    ]
+      { mk: "Sistem Operasi", jam: "15:20:00 - 17:00:00", ruang: "F3.3" },
+    ],
   },
   {
     hari: "Jumat",
     jadwal: [
       { mk: "Matematika Diskret", jam: "07:00:00 - 08:40:00", ruang: "F3.2" },
-      { mk: "Basis Data", jam: "14:15:00 - 15:55:00", ruang: "G1.6" }
-    ]
-  }
+      { mk: "Basis Data", jam: "14:15:00 - 15:55:00", ruang: "G1.6" },
+    ],
+  },
 ];
 
 // Global styles moved to components/GlobalStyles.tsx
@@ -193,13 +214,13 @@ function MahasiswaView() {
   const handleMoodSelect = async (moodId: string) => {
     setSelectedMood(moodId);
     setHasCheckedInToday(true);
-    
+
     // Kirim perhitungan skor ke backend
     try {
-      await fetch('/api/profiles', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: 'mhs-1', mood: moodId })
+      await fetch("/api/profiles", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: "mhs-1", mood: moodId }),
       });
     } catch (e) {}
 
@@ -234,7 +255,7 @@ function MahasiswaView() {
     const counselor = counselorOptions.find(
       (option) => option.id === selectedCounselor,
     );
-    
+
     try {
       const res = await fetch("/api/bookings", {
         method: "POST",
@@ -243,15 +264,19 @@ function MahasiswaView() {
           mahasiswaId: "mhs-1",
           mahasiswaName: "Aditya Rajadana Hernadi",
           counselorId: selectedCounselor,
-          slot: selectedSlot
-        })
+          slot: selectedSlot,
+        }),
       });
       if (res.ok) {
         const data = await res.json();
         if (data.isShifted) {
-          setBookingStatus(`Jadwal penuh! Booking digeser otomatis ke ${data.newSlot} dengan ${counselor?.name || "konselor"}. Menunggu konfirmasi.`);
+          setBookingStatus(
+            `Jadwal penuh! Booking digeser otomatis ke ${data.newSlot} dengan ${counselor?.name || "konselor"}. Menunggu konfirmasi.`,
+          );
         } else {
-          setBookingStatus(`Booking berhasil dikirim ke ${counselor?.name || "konselor"} pada pukul ${selectedSlot}. Menunggu konfirmasi.`);
+          setBookingStatus(
+            `Booking berhasil dikirim ke ${counselor?.name || "konselor"} pada pukul ${selectedSlot}. Menunggu konfirmasi.`,
+          );
         }
       } else {
         const errorData = await res.json();
@@ -301,8 +326,6 @@ function MahasiswaView() {
     <div className="flex w-full min-h-screen flex-col md:flex-row bg-[#faf9f9]">
       {/* SIDEBAR */}
       <div className="hidden md:flex flex-col w-[280px] bg-[#f4f3f3] border-r-2 border-[#e3e2e2] p-6 h-screen sticky top-0 shrink-0">
-
-
         {/* Profile Card */}
         <div className="bg-[#006590] rounded-2xl p-5 mb-6 text-white border-2 border-[#004c6e] border-b-4 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-24 h-24 bg-white opacity-5 rounded-full -mr-8 -mt-8"></div>
@@ -411,7 +434,7 @@ function MahasiswaView() {
             <p className="text-sm font-bold text-[#6e7881]">Akses: Mahasiswa</p>
           </div>
           <button
-            onClick={() => router.push('/login')}
+            onClick={() => router.push("/login")}
             className="p-3 bg-[#f4f3f3] border-2 border-[#e3e2e2] border-b-4 rounded-xl text-[#3e4850] hover:bg-[#e9e8e8] active:border-b-2 active:translate-y-[2px] transition-all"
             title="Kelbali ke Login"
           >
@@ -488,6 +511,60 @@ function MahasiswaView() {
               />
             )}
 
+            {/* Mood Trend Widget */}
+            <div className="card-tactile mt-6 mb-6">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-heading text-[#1a1c1c] flex items-center gap-2">
+                  <Activity className="w-6 h-6 text-[#1cb0f6]" />
+                  Tren Mood (30 Hari Terakhir)
+                </h3>
+              </div>
+
+              <div className="flex items-end gap-1 sm:gap-2 h-40 w-full pt-4">
+                {dummyMoodTrendData.map((data, i) => (
+                  <div
+                    key={i}
+                    className="flex-1 flex flex-col justify-end group relative h-full"
+                  >
+                    <div
+                      className={`${data.color} w-full rounded-t-md transition-all duration-300 hover:opacity-80 border border-black/10`}
+                      style={{ height: `${data.height}%` }}
+                    ></div>
+                    <div className="opacity-0 group-hover:opacity-100 absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-[#1a1c1c] text-white text-[10px] px-2 py-1 rounded whitespace-nowrap z-10 pointer-events-none transition-opacity">
+                      H-{data.day}: {data.tooltip}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex justify-between mt-6 pt-4 border-t-2 border-[#e3e2e2]">
+                <div className="text-center flex-1">
+                  <p className="text-xs sm:text-sm text-[#6e7881] font-bold uppercase">
+                    Dominan
+                  </p>
+                  <p className="font-heading text-base sm:text-lg text-[#2b6c00]">
+                    Biasa
+                  </p>
+                </div>
+                <div className="text-center flex-1 border-l-2 border-[#e3e2e2]">
+                  <p className="text-xs sm:text-sm text-[#6e7881] font-bold uppercase">
+                    Rata-rata
+                  </p>
+                  <p className="font-heading text-base sm:text-lg text-[#006590]">
+                    Stabil
+                  </p>
+                </div>
+                <div className="text-center flex-1 border-l-2 border-[#e3e2e2]">
+                  <p className="text-xs sm:text-sm text-[#6e7881] font-bold uppercase">
+                    Krisis
+                  </p>
+                  <p className="font-heading text-base sm:text-lg text-[#ba1a1a]">
+                    0 Hari
+                  </p>
+                </div>
+              </div>
+            </div>
+
             {/* Bottom Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="card-tactile">
@@ -500,55 +577,86 @@ function MahasiswaView() {
                   <div className="bg-[#f4f3f3] border-2 border-[#e3e2e2] rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:border-[#1cb0f6] transition-colors">
                     <div className="flex items-center gap-4">
                       <div className="bg-[#c8e6ff] text-[#004c6e] p-3 rounded-xl text-center min-w-[60px] border border-[#88ceff]">
-                        <p className="text-[10px] font-bold uppercase leading-none mb-1">HARI</p>
+                        <p className="text-[10px] font-bold uppercase leading-none mb-1">
+                          HARI
+                        </p>
                         <p className="text-lg font-heading leading-none">INI</p>
                       </div>
                       <div>
-                        <p className="font-bold text-[#1a1c1c] text-lg">{jadwalKuliahData[0].jadwal[0].mk}</p>
-                        <p className="text-sm text-[#6e7881]">{jadwalKuliahData[0].jadwal[0].jam.substring(0, 5)} - {jadwalKuliahData[0].jadwal[0].jam.substring(11, 16)} • Ruang {jadwalKuliahData[0].jadwal[0].ruang}</p>
+                        <p className="font-bold text-[#1a1c1c] text-lg">
+                          {jadwalKuliahData[0].jadwal[0].mk}
+                        </p>
+                        <p className="text-sm text-[#6e7881]">
+                          {jadwalKuliahData[0].jadwal[0].jam.substring(0, 5)} -{" "}
+                          {jadwalKuliahData[0].jadwal[0].jam.substring(11, 16)}{" "}
+                          • Ruang {jadwalKuliahData[0].jadwal[0].ruang}
+                        </p>
                       </div>
                     </div>
                   </div>
                   <div className="bg-[#f4f3f3] border-2 border-[#e3e2e2] rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:border-[#1cb0f6] transition-colors">
                     <div className="flex items-center gap-4">
                       <div className="bg-[#ffdf92] text-[#594400] p-3 rounded-xl text-center min-w-[60px] border border-[#755b00]">
-                        <p className="text-[10px] font-bold uppercase leading-none mb-1">HARI</p>
+                        <p className="text-[10px] font-bold uppercase leading-none mb-1">
+                          HARI
+                        </p>
                         <p className="text-lg font-heading leading-none">INI</p>
                       </div>
                       <div>
-                        <p className="font-bold text-[#1a1c1c] text-lg">{jadwalKuliahData[0].jadwal[1].mk}</p>
-                        <p className="text-sm text-[#6e7881]">{jadwalKuliahData[0].jadwal[1].jam.substring(0, 5)} - {jadwalKuliahData[0].jadwal[1].jam.substring(11, 16)} • Ruang {jadwalKuliahData[0].jadwal[1].ruang}</p>
+                        <p className="font-bold text-[#1a1c1c] text-lg">
+                          {jadwalKuliahData[0].jadwal[1].mk}
+                        </p>
+                        <p className="text-sm text-[#6e7881]">
+                          {jadwalKuliahData[0].jadwal[1].jam.substring(0, 5)} -{" "}
+                          {jadwalKuliahData[0].jadwal[1].jam.substring(11, 16)}{" "}
+                          • Ruang {jadwalKuliahData[0].jadwal[1].ruang}
+                        </p>
                       </div>
                     </div>
                   </div>
-                  {bookings.filter(b => b.status === 'confirmed').map((b, i) => {
-                    const slotParts = b.slot.split(" ");
-                    const isDateIncluded = slotParts.length > 1;
-                    const dateStr = isDateIncluded ? slotParts[0] : "Bln";
-                    const timeStr = isDateIncluded ? slotParts.slice(1).join(" ") : b.slot;
-                    const dateObj = isDateIncluded ? new Date(dateStr) : new Date();
-                    
-                    return (
-                      <div key={i} className="bg-[#f4f3f3] border-2 border-[#e3e2e2] rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:border-[#1cb0f6] transition-colors">
-                        <div className="flex items-center gap-4">
-                          <div className="bg-[#87fe45] text-[#082100] p-3 rounded-xl text-center min-w-[60px] border border-[#51bd00]">
-                            <p className="text-[10px] font-bold uppercase leading-none mb-1">
-                              {isDateIncluded ? dateObj.toLocaleDateString('id-ID', { weekday: 'short' }) : 'HARI'}
-                            </p>
-                            <p className="text-lg font-heading leading-none">{isDateIncluded ? dateObj.getDate() : 'INI'}</p>
-                          </div>
-                          <div>
-                            <p className="font-bold text-[#1a1c1c] text-lg">
-                              Konseling dengan {b.counselorId}
-                            </p>
-                            <p className="text-sm text-[#6e7881]">
-                              {timeStr} • Sesi Konseling
-                            </p>
+                  {bookings
+                    .filter((b) => b.status === "confirmed")
+                    .map((b, i) => {
+                      const slotParts = b.slot.split(" ");
+                      const isDateIncluded = slotParts.length > 1;
+                      const dateStr = isDateIncluded ? slotParts[0] : "Bln";
+                      const timeStr = isDateIncluded
+                        ? slotParts.slice(1).join(" ")
+                        : b.slot;
+                      const dateObj = isDateIncluded
+                        ? new Date(dateStr)
+                        : new Date();
+
+                      return (
+                        <div
+                          key={i}
+                          className="bg-[#f4f3f3] border-2 border-[#e3e2e2] rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:border-[#1cb0f6] transition-colors"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="bg-[#87fe45] text-[#082100] p-3 rounded-xl text-center min-w-[60px] border border-[#51bd00]">
+                              <p className="text-[10px] font-bold uppercase leading-none mb-1">
+                                {isDateIncluded
+                                  ? dateObj.toLocaleDateString("id-ID", {
+                                      weekday: "short",
+                                    })
+                                  : "HARI"}
+                              </p>
+                              <p className="text-lg font-heading leading-none">
+                                {isDateIncluded ? dateObj.getDate() : "INI"}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="font-bold text-[#1a1c1c] text-lg">
+                                Konseling dengan {b.counselorId}
+                              </p>
+                              <p className="text-sm text-[#6e7881]">
+                                {timeStr} • Sesi Konseling
+                              </p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
                 </div>
               </div>
 
@@ -612,7 +720,10 @@ function MahasiswaView() {
                       {jadwalKuliahData[0].jadwal[0].mk}
                     </h3>
                     <p className="text-sm text-[#006590] flex items-center gap-1 mt-1 font-medium">
-                      <Clock className="w-4 h-4" /> {jadwalKuliahData[0].jadwal[0].jam.substring(0, 5)} - {jadwalKuliahData[0].jadwal[0].jam.substring(11, 16)} • Ruang {jadwalKuliahData[0].jadwal[0].ruang}
+                      <Clock className="w-4 h-4" />{" "}
+                      {jadwalKuliahData[0].jadwal[0].jam.substring(0, 5)} -{" "}
+                      {jadwalKuliahData[0].jadwal[0].jam.substring(11, 16)} •
+                      Ruang {jadwalKuliahData[0].jadwal[0].ruang}
                     </p>
                   </div>
                   {hasPresensiToday ? (
@@ -641,7 +752,10 @@ function MahasiswaView() {
                       {jadwalKuliahData[0].jadwal[1].mk}
                     </h3>
                     <p className="text-sm text-[#6e7881] flex items-center gap-1 mt-1 font-medium">
-                      <Clock className="w-4 h-4" /> {jadwalKuliahData[0].jadwal[1].jam.substring(0, 5)} - {jadwalKuliahData[0].jadwal[1].jam.substring(11, 16)} • Ruang {jadwalKuliahData[0].jadwal[1].ruang}
+                      <Clock className="w-4 h-4" />{" "}
+                      {jadwalKuliahData[0].jadwal[1].jam.substring(0, 5)} -{" "}
+                      {jadwalKuliahData[0].jadwal[1].jam.substring(11, 16)} •
+                      Ruang {jadwalKuliahData[0].jadwal[1].ruang}
                     </p>
                   </div>
                   <button
@@ -732,13 +846,17 @@ function MahasiswaView() {
                   </h3>
                   <div className="space-y-3">
                     {hariItem.jadwal.map((j, idx) => (
-                      <div key={idx} className="bg-[#f4f3f3] p-4 rounded-xl border-2 border-[#e3e2e2] flex justify-between items-center">
+                      <div
+                        key={idx}
+                        className="bg-[#f4f3f3] p-4 rounded-xl border-2 border-[#e3e2e2] flex justify-between items-center"
+                      >
                         <div>
                           <p className="font-bold text-[#1a1c1c] text-lg">
                             {j.mk}
                           </p>
                           <p className="text-sm text-[#6e7881] mt-1 font-medium">
-                            {j.jam.substring(0, 5)} - {j.jam.substring(11, 16)} • Ruang {j.ruang}
+                            {j.jam.substring(0, 5)} - {j.jam.substring(11, 16)}{" "}
+                            • Ruang {j.ruang}
                           </p>
                         </div>
                       </div>
@@ -906,12 +1024,19 @@ function MahasiswaView() {
             </h2>
             <div className="space-y-4">
               {notifications.length === 0 ? (
-                <div className="card-tactile text-center text-[#6e7881] py-10">Belum ada notifikasi.</div>
+                <div className="card-tactile text-center text-[#6e7881] py-10">
+                  Belum ada notifikasi.
+                </div>
               ) : (
-                notifications.map(n => (
-                  <div key={n.id} className={`card-tactile ${n.read ? 'bg-white opacity-70' : 'bg-[#e6f4ff] border-[#88ceff]'}`}>
+                notifications.map((n) => (
+                  <div
+                    key={n.id}
+                    className={`card-tactile ${n.read ? "bg-white opacity-70" : "bg-[#e6f4ff] border-[#88ceff]"}`}
+                  >
                     <p className="font-medium text-[#1a1c1c]">{n.message}</p>
-                    <p className="text-xs text-[#6e7881] mt-2">{new Date(n.createdAt).toLocaleString()}</p>
+                    <p className="text-xs text-[#6e7881] mt-2">
+                      {new Date(n.createdAt).toLocaleString()}
+                    </p>
                   </div>
                 ))
               )}
@@ -920,7 +1045,11 @@ function MahasiswaView() {
         )}
       </div>
 
-      <ChatBubble currentUserRole="mahasiswa" currentUserId="mhs-1" currentUserName="Aditya Rajadana Hernadi" />
+      <ChatBubble
+        currentUserRole="mahasiswa"
+        currentUserId="mhs-1"
+        currentUserName="Aditya Rajadana Hernadi"
+      />
     </div>
   );
 }
