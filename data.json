@@ -1,0 +1,24 @@
+{
+  "bookings": [],
+  "notifications": [],
+  "chats": [
+    {
+      "id": "1780557531884",
+      "senderId": "mhs-1",
+      "senderName": "Aditya Rajadana Hernadi",
+      "senderRole": "mahasiswa",
+      "receiverId": "rani",
+      "text": "asda",
+      "timestamp": "2026-06-04T07:18:51.884Z"
+    },
+    {
+      "id": "1780557867723",
+      "senderId": "rani",
+      "senderName": "Rani Wulandari, M.Psi.",
+      "senderRole": "konselor",
+      "receiverId": "mhs-1",
+      "text": "halo",
+      "timestamp": "2026-06-04T07:24:27.724Z"
+    }
+  ]
+}

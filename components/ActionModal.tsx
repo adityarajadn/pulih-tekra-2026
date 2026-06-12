@@ -4,8 +4,30 @@ import { CheckCircle2, X } from 'lucide-react';
 export function ActionModal({ action, student, onClose }: { action: string, student: any, onClose: () => void }) {
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
+    const date = formData.get('date') as string;
+    const time = formData.get('time') as string;
+
+    if (action === 'jadwal') {
+      try {
+        await fetch('/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            mahasiswaId: student.name.includes('Budi') ? 'mhs-2' : student.name.includes('Siti') ? 'mhs-3' : 'mhs-1',
+            mahasiswaName: student.name,
+            counselorId: 'rani',
+            slot: time,
+            date: date,
+            status: 'confirmed',
+            createdBy: 'konselor'
+          })
+        });
+      } catch (e) {}
+    }
+
     setIsSuccess(true);
     setTimeout(() => onClose(), 2000);
   };
@@ -36,8 +58,8 @@ export function ActionModal({ action, student, onClose }: { action: string, stud
               </div>
               {action === 'jadwal' ? (
                 <>
-                  <input type="date" required className="input-tactile w-full px-4 py-3" />
-                  <input type="time" required className="input-tactile w-full px-4 py-3" />
+                  <input name="date" type="date" required className="input-tactile w-full px-4 py-3" />
+                  <input name="time" type="time" required className="input-tactile w-full px-4 py-3" />
                   <select className="input-tactile w-full px-4 py-3 font-bold text-[#3e4850]">
                     <option>Online (G-Meet)</option>
                     <option>Offline (Klinik)</option>

@@ -39,12 +39,33 @@ export default function GlobalStyles() {
     .card-tactile-sm { background-color: var(--surface-color); border: 2px solid var(--border-light); border-bottom: 3px solid var(--border-dark); border-radius: 1rem; padding: 1rem; }
     .btn-primary { background-color: var(--primary); color: var(--primary-text); border: 2px solid var(--primary-dark); border-bottom: 4px solid var(--primary-dark); border-radius: 1rem; font-weight: 700; text-transform: uppercase; font-family: 'Be Vietnam Pro', sans-serif; letter-spacing: 0.05em; transition: all 0.1s ease; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; }
     .btn-outline { background-color: transparent; color: var(--primary-dark); border: 2px solid var(--primary-dark); border-bottom: 4px solid var(--primary-dark); border-radius: 1rem; font-weight: 700; text-transform: uppercase; font-family: 'Be Vietnam Pro', sans-serif; letter-spacing: 0.05em; transition: all 0.1s ease; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; }
-    .nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem 1rem; border-radius: 1rem; font-weight: 700; transition: all 0.1s ease; border: 2px solid transparent; border-bottom-width: 4px; width: 100%; text-align: left; }
+    .nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem 1rem; border-radius: 1rem; font-weight: 700; transition: all 0.1s ease; border: 2px solid transparent; border-bottom-width: 4px; width: 100%; text-align: left; background-color: var(--surface-color); color: var(--text-main); }
     .nav-item.active { background-color: var(--primary); color: var(--primary-text); border-color: var(--primary-dark); }
     .nav-item:not(.active) { background-color: var(--surface-color); color: var(--text-main); border-color: var(--border-light); border-bottom-color: var(--border-dark); }
     .nav-item:not(.active):active { transform: translateY(2px); border-bottom-width: 2px; }
     .input-tactile { border: 2px solid var(--border-light); border-bottom: 4px solid var(--border-dark); border-radius: 1rem; transition: all 0.1s ease; font-family: inherit; }
     .input-tactile:focus { outline: none; border-color: var(--primary); border-bottom-color: var(--primary-dark); }
+
+    @media print {
+      @page {
+        size: A4 landscape;
+        margin: 10mm;
+      }
+      body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        background-color: white !important;
+      }
+      .card-tactile, .card-tactile-sm {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+      /* Ensure flex tracks don't collapse */
+      .progress-track {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
   `}} />
   );
 }
