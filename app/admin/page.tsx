@@ -118,7 +118,7 @@ function AdminView() {
           <p className="text-[#6e7881] font-medium font-bold uppercase tracking-wider text-sm">Data Agregat Kesejahteraan Universitas</p>
         </div>
         <div className="flex gap-3 w-full md:w-auto print:hidden">
-          <button onClick={() => { try { window.print(); } catch(e){ alert('Print failed: '+(e && e.message ? e.message : e)); } }} className="btn-primary py-3 px-6 shrink-0 text-sm">Unduh PDF</button>
+          <button onClick={() => { try { window.print(); } catch(e: any){ alert('Print failed: '+(e && e.message ? e.message : e)); } }} className="btn-primary py-3 px-6 shrink-0 text-sm">Unduh PDF</button>
         </div>
       </div>
 
