@@ -88,17 +88,17 @@ export function StudentDetailPanelTactile({ student, getStatusStyle, onOpenActio
 
                 <div>
                   <label className="block text-xs font-bold text-[#006590] uppercase tracking-wider mb-1">Hasil Sesi & Observasi Klinis</label>
-                  <textarea rows="2" className="input-tactile w-full px-4 py-3 bg-white text-sm" placeholder="Catat keluhan utama dan hasil observasi..."></textarea>
+                  <textarea rows={2} className="input-tactile w-full px-4 py-3 bg-white text-[#1a1c1c] text-sm resize-none focus:outline-none focus:ring-0" placeholder="Tambahkan catatan khusus..." defaultValue={student.issue}></textarea>
                 </div>
                 
                 <div>
                   <label className="block text-xs font-bold text-[#006590] uppercase tracking-wider mb-1">Perkembangan Mahasiswa</label>
-                  <textarea rows="2" className="input-tactile w-full px-4 py-3 bg-white text-sm" placeholder="Catat kemajuan atau perubahan dari sesi sebelumnya..."></textarea>
+                  <textarea rows={2} className="input-tactile w-full px-4 py-3 bg-white text-sm" placeholder="Catat kemajuan atau perubahan dari sesi sebelumnya..."></textarea>
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-[#006590] uppercase tracking-wider mb-1">Catatan Tindak Lanjut (Follow-up)</label>
-                  <textarea rows="2" className="input-tactile w-full px-4 py-3 bg-white text-sm" placeholder="Rencana intervensi, tugas mandiri, atau rujukan..."></textarea>
+                  <textarea rows={2} className="input-tactile w-full px-4 py-3 bg-white text-sm" placeholder="Rencana intervensi, tugas mandiri, atau rujukan..."></textarea>
                 </div>
 
                 <div className="flex justify-end pt-2">
@@ -148,7 +148,7 @@ export function StudentDetailPanelTactile({ student, getStatusStyle, onOpenActio
                   <option>ULTKSP (Kekerasan/Perundungan)</option>
                   <option>Biro Akademik</option>
                 </select>
-                <textarea rows="3" className="input-tactile w-full px-4 py-3 bg-white text-sm" placeholder="Alasan klinis rujukan..."></textarea>
+                <textarea rows={3} className="input-tactile w-full px-4 py-3 bg-white text-sm" placeholder="Alasan klinis rujukan..."></textarea>
                 <button className="btn-primary py-3 w-full"><Send className="w-4 h-4"/> Kirim Rujukan Otomatis</button>
               </div>
             </div>

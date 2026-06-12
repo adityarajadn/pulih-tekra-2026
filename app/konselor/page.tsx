@@ -83,8 +83,8 @@ export default function KonselorPage() {
 function KonselorView() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [selectedStudent, setSelectedStudent] = useState(null);
-  const [activeAction, setActiveAction] = useState(null);
+  const [selectedStudent, setSelectedStudent] = useState<any | null>(null);
+  const [activeAction, setActiveAction] = useState<string | null>(null);
   const [bookings, setBookings] = useState<any[]>([]);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [unreadNotifs, setUnreadNotifs] = useState(3);
@@ -176,7 +176,7 @@ function KonselorView() {
     } catch (e) {}
   };
 
-  const getStatusStyle = (status) => {
+  const getStatusStyle = (status: string) => {
     switch (status) {
       case "merah":
         return "bg-[#ffdad6] text-[#93000a] border-[#ba1a1a]";

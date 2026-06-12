@@ -66,7 +66,7 @@ export function ActionModal({ action, student, onClose }: { action: string, stud
                   </select>
                 </>
               ) : (
-                <textarea rows="4" required placeholder="Tulis pesan..." className="input-tactile w-full px-4 py-3 resize-none"></textarea>
+                <textarea rows={4} required placeholder="Tulis pesan..." className="input-tactile w-full px-4 py-3 resize-none"></textarea>
               )}
               <div className="pt-4 flex gap-3">
                 <button type="button" onClick={onClose} className="btn-outline flex-1 py-3 border-[#dadada] text-[#6e7881]">Batal</button>

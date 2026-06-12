@@ -12,7 +12,7 @@ export function ChatbotTEMAN() {
 
   useEffect(() => { (messagesEndRef as any).current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, isTyping]);
 
-  const handleSend = async (e) => {
+  const handleSend = async (e: any) => {
     e.preventDefault();
     const trimmedInput = inputValue.trim();
     if (!trimmedInput) return;
